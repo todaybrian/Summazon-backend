@@ -3,7 +3,6 @@ from flask import request
 import requests
 from playwright.sync_api import sync_playwright
 import vertexai
-from prompts import *
 
 app = flask.Flask(__name__)
 
@@ -31,6 +30,7 @@ def process_url():
     response = {
         "Product Name": "",
         "Image": "",
+        "Rating": "",
         "Description": "",
         "Pros": "",
         "Cons": "",
@@ -50,6 +50,8 @@ def process_url():
         response["Image"] = page.locator('meta[property="og:image"]').get_attribute(
             "content"
         )
+        # document.getElementById("acrPopover").title
+        response["Rating"] = page.locator("#acrPopover").get_attribute("title").replace(" out of 5 stars", "")
 
         page.goto(
             f"https://www.amazon.ca/lmao/product-reviews/{id}/reviewerType=all_reviews"
@@ -72,6 +74,30 @@ def process_url():
     response["Pros"] = pros(data["Top"])
 
     return flask.jsonify(data)
+
+@app.route("/dummy", methods=["GET", "POST"])
+def dummy():
+    id = request.args.get("id")  # Assuming the URL is sent as a form field
+
+    if id is None:
+        return "No id provided", 400
+
+    response = {
+        "Product Name": id,
+        "Image": "https://media.tenor.com/HnknA3u-W7kAAAAD/cat-meme.png",
+        "Rating": "4.5",
+        "Description": "abc_description",
+        "Pros": "abc_pros",
+        "Cons": "abc_cons",
+        "Pricing": "abc_pricing",
+        "Quality": "abc_quality",
+        "Performance": "abc_performance",
+        "Reliability": "abc_reliability",
+    }
+    res = flask.jsonify(response)
+    res.headers.add('Access-Control-Allow-Origin', '*')
+    return res
+
 
 
 app.run(debug=True)
