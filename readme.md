@@ -1,3 +1,5 @@
 # Summamazon Backend
 
-This code is intended for educational purposes only. It is not intended for production use.
+Back end to [Summazon](https://github.com/todaybrian/summazon).
+
+This code is intended for educational purposes only.
